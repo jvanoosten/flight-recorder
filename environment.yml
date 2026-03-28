@@ -1,0 +1,95 @@
+name: agent-dev
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Core Python
+  - python=3.11
+  - pip
+  - ipython
+  - ipykernel
+
+  # Core data libraries
+  - numpy
+  - pandas
+  - scipy
+
+  # ML / AI
+  - scikit-learn
+  - pytorch
+  - transformers
+  - sentence-transformers
+
+  # Data processing
+  - pyarrow
+  - fastparquet
+
+  # Visualization
+  - matplotlib
+  - seaborn
+
+  # Dev tooling
+  - pytest
+  - pytest-cov
+  - black
+  - ruff
+  - mypy
+  - pre-commit
+
+  # Notebook support
+  - jupyterlab
+  - notebook
+
+  # Utilities
+  - requests
+  - httpx
+  - pydantic
+  - python-dotenv
+  - rich
+  - typer
+
+  # Database
+  - sqlalchemy
+  - pymysql
+
+  # Git integration
+  # - git
+
+  - pip:
+      # LLM + agent frameworks
+      - langchain
+      - langchain-community
+      - langchain-openai
+      - langgraph
+
+      # vector DB
+      - chromadb
+      - faiss-cpu
+
+      # agent utilities
+      - tavily-python
+      - arxiv
+
+      # OpenAI
+      - openai
+
+      # Anthropic
+      - anthropic
+
+      # embeddings
+      - tiktoken
+
+      # API frameworks
+      - fastapi
+      - uvicorn
+
+      # CLI agent tools
+      - typer-cli
+
+      # evaluation
+      - ragas
+      - trulens
+
+      # optional MCP experimentation
+      - mcp

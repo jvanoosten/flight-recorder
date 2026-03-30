@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flight Recorder</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: 0.5rem; }
+    input { width: 100%; padding: 0.3rem; box-sizing: border-box; }
+    button { margin-top: 1rem; padding: 0.5rem 1.5rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1.5rem; }
+    th, td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; }
+    th { background: #f0f0f0; }
+    #error { color: red; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Flight Recorder</h1>
+
+  <form id="record-form">
+    <label>Current State
+      <input type="text" id="current_state" required>
+    </label>
+    <label>Event
+      <input type="text" id="event" required>
+    </label>
+    <label>Actions (comma-separated)
+      <input type="text" id="actions" placeholder="e.g. turn_key, start_engine">
+    </label>
+    <label>New State
+      <input type="text" id="new_state" required>
+    </label>
+    <button type="submit">Record</button>
+    <div id="error"></div>
+  </form>
+
+  <h2>Recorded Transitions</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Current State</th>
+        <th>Event</th>
+        <th>Actions</th>
+        <th>New State</th>
+      </tr>
+    </thead>
+    <tbody id="records-body"></tbody>
+  </table>
+
+  <script>
+    async function loadRecords() {
+      const res = await fetch('/records');
+      const records = await res.json();
+      const tbody = document.getElementById('records-body');
+      tbody.innerHTML = '';
+      records.forEach((r, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${r.current_state}</td>
+          <td>${r.event}</td>
+          <td>${r.actions.join(', ')}</td>
+          <td>${r.new_state}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('record-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = '';
+      const actions = document.getElementById('actions').value
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+      const body = {
+        current_state: document.getElementById('current_state').value,
+        event: document.getElementById('event').value,
+        actions,
+        new_state: document.getElementById('new_state').value,
+      };
+      try {
+        const res = await fetch('/record', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          errorEl.textContent = JSON.stringify(err.detail);
+          return;
+        }
+        document.getElementById('record-form').reset();
+        await loadRecords();
+      } catch (err) {
+        errorEl.textContent = 'Request failed: ' + err.message;
+      }
+    });
+
+    loadRecords();
+  </script>
+</body>
+</html>

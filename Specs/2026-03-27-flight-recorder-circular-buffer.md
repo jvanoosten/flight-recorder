@@ -77,7 +77,7 @@ Example logical record:
 {
     "current_state": "Idle",
     "event": "start",
-    "actions": {"turn_key", "start_engine",
+    "actions": {"turn_key", "start_engine"]
     "new_state": "Running"
 }
 ```
